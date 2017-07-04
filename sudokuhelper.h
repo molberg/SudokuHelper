@@ -20,6 +20,7 @@ public:
 private slots:
     void updateField(int cell, int value);
     void restoreField(int cell, int value);
+    void moveFocus(int cell);
 
     void on_actionAbout_triggered();
 
@@ -33,6 +34,9 @@ private:
     Ui::SudokuHelper *ui;
     QFrame frames[DIM];
     SudokuTile tiles[DIM*DIM];
+    int rowNumber(int cell) { return cell/DIM; };
+    int colNumber(int cell) { return cell%DIM; };
+    int cellNumber(int row, int col) { return row*DIM+col; };
 };
 
 #endif // SUDOKUHELPER_H

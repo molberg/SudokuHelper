@@ -1,6 +1,7 @@
 #include <QDebug>
 #include <QPainter>
 #include <QMouseEvent>
+#include <QKeyEvent>
 
 #include "sudokutile.h"
 
@@ -77,7 +78,8 @@ void SudokuTile::paintEvent(QPaintEvent *)
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
                 QRectF cell = QRectF(col*sub, row*sub, sub, sub);
-                pen = QPen(Qt::darkGray);
+                if (hasFocus()) pen = QPen(Qt::lightGray);
+                else            pen = QPen(Qt::darkGray);
                 painter.setPen(pen);
                 painter.drawRect(cell);
                 if (possible[row*3+col]) painter.drawText(cell, Qt::AlignCenter, QString::number(number));
@@ -91,18 +93,36 @@ void SudokuTile::paintEvent(QPaintEvent *)
 void SudokuTile::mousePressEvent(QMouseEvent *e)
 {
     if (solved) {
-	qDebug() << __FUNCTION__ << e->x() << e->y() << solved << m_id << value;
-	solved = false;
-	emit restoreMe(m_id, value);
-	value = 0;
+        qDebug() << __FUNCTION__ << e->x() << e->y() << solved << m_id << value;
+        solved = false;
+        emit restoreMe(m_id, value);
+        value = 0;
     } else {
-	int row = e->y()/sub;
-	int col = e->x()/sub;
-	if (row < 0 || row > 2 || col < 0 || col > 2) return;
-	int cell = row*3 + col + 1;
-	if (isPossible(cell)) {
-	    setSolved(cell);
-	    emit valueChanged(m_id, cell);
-	}
+        int row = e->y()/sub;
+        int col = e->x()/sub;
+        if (row < 0 || row > 2 || col < 0 || col > 2) return;
+        int cell = row*3 + col + 1;
+        if (isPossible(cell)) {
+            setSolved(cell);
+            emit valueChanged(m_id, cell);
+        }
+    }
+}
+
+void SudokuTile::keyPressEvent(QKeyEvent *e)
+{
+    char key = char(e->key());
+    if (e->key() == Qt::Key_Tab) {
+        emit moveFocus(m_id);
+        return;
+    }
+
+    int cell = key - '0';
+    if (cell > 0 && cell < 10) {
+        if (!solved && isPossible(cell)) {
+            setSolved(cell);
+            emit valueChanged(m_id, cell);
+            emit moveFocus(m_id);
+        }
     }
 }

@@ -5,6 +5,7 @@
 #include <QVector>
 
 #define DIM 9
+#define SUB 3
 
 class SudokuTile : public QWidget
 {
@@ -23,14 +24,16 @@ public:
     int getValue()  const { return value;  };
     void setCell(int value, bool possible);
     bool isPossible(int value) const;
-    QSize sizeHint() const { return QSize(3*sub, 3*sub); };
+    QSize sizeHint() const { return QSize(SUB*sub, SUB*sub); };
 
 protected:
     void paintEvent(QPaintEvent *);
     void mousePressEvent(QMouseEvent *);
+    void keyPressEvent(QKeyEvent *);
 
 signals:
     void valueChanged(int id, int value);
+    void moveFocus(int id);
     void restoreMe(int id, int value);
 
 private:

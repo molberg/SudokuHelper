@@ -14,7 +14,7 @@ target.path = /usr/local/bin
 
 SOURCES += main.cpp\
         sudokuhelper.cpp \
-    sudokutile.cpp
+        sudokutile.cpp
 
 HEADERS  += sudokuhelper.h \
     sudokutile.h
