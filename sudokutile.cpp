@@ -20,6 +20,7 @@ void SudokuTile::setSolved(int solution)
     value = solution;
     repaint();
     update();
+    emit valueChanged(m_id, solution);
 }
 
 void SudokuTile::lock()
@@ -37,6 +38,21 @@ void SudokuTile::reset()
         value = 0;
         for (int i = 0; i < DIM; i++) possible[i] = true;
     }
+}
+
+int SudokuTile::unique()
+{
+    if (solved) return 0;
+
+    int count = 0, which = 0;
+    for (int i = 0; i < DIM; i++) {
+        if (possible[i]) {
+            count++;
+            which = i+1;
+        }
+    }
+    if (count != 1) return 0;
+    return which;
 }
 
 void SudokuTile::setCell(int value, bool flag)
@@ -78,7 +94,7 @@ void SudokuTile::paintEvent(QPaintEvent *)
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
                 QRectF cell = QRectF(col*sub, row*sub, sub, sub);
-                if (hasFocus()) pen = QPen(Qt::lightGray);
+                if (hasFocus()) pen = QPen(Qt::black);
                 else            pen = QPen(Qt::darkGray);
                 painter.setPen(pen);
                 painter.drawRect(cell);
@@ -104,25 +120,41 @@ void SudokuTile::mousePressEvent(QMouseEvent *e)
         int cell = row*3 + col + 1;
         if (isPossible(cell)) {
             setSolved(cell);
-            emit valueChanged(m_id, cell);
         }
     }
 }
 
 void SudokuTile::keyPressEvent(QKeyEvent *e)
 {
-    char key = char(e->key());
-    if (e->key() == Qt::Key_Tab) {
-        emit moveFocus(m_id);
-        return;
-    }
-
-    int cell = key - '0';
-    if (cell > 0 && cell < 10) {
+    switch (e->key()) {
+    case Qt::Key_Tab:
+    case Qt::Key_Right:
+        emit moveFocus(m_id, 1);
+        break;
+    case Qt::Key_Backtab:
+    case Qt::Key_Left:
+        emit moveFocus(m_id, -1);
+        break;
+    case Qt::Key_Up:
+        emit moveFocus(m_id, -DIM);
+        break;
+    case Qt::Key_Down:
+        emit moveFocus(m_id, DIM);
+        break;
+    case Qt::Key_1:
+    case Qt::Key_2:
+    case Qt::Key_3:
+    case Qt::Key_4:
+    case Qt::Key_5:
+    case Qt::Key_6:
+    case Qt::Key_7:
+    case Qt::Key_8:
+    case Qt::Key_9:
+        int cell = e->key() - Qt::Key_0;
         if (!solved && isPossible(cell)) {
             setSolved(cell);
-            emit valueChanged(m_id, cell);
-            emit moveFocus(m_id);
+            emit moveFocus(m_id, 1);
         }
+        break;
     }
 }
