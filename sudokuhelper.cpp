@@ -2,6 +2,11 @@
 #include <QMessageBox>
 #include <QGridLayout>
 #include <QShortcut>
+#include <QFile>
+#include <QFileDialog>
+#include <QDir>
+#include <QTextStream>
+#include <QRegExp>
 
 #include "sudokuhelper.h"
 #include "ui_sudokuhelper.h"
@@ -270,4 +275,31 @@ void SudokuHelper::test()
     tiles[78].setSolved(4);
     tiles[80].setSolved(8);
     setFocus();
+}
+
+void SudokuHelper::on_actionOpen_triggered()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, "Open sudoku", QDir::homePath()+"C/QT/SudokuHelper", "");
+    if (!fileName.isNull()) {
+        QFile sudoku(fileName);
+        if (sudoku.open(QIODevice::ReadOnly)) {
+            QTextStream in(&sudoku);
+            QString line;
+            while (!in.atEnd()) {
+                line += in.readLine();
+            }
+            line.remove(QRegExp("[^.0123456789]"));
+            // qDebug() << line << line.length();
+            if (line.length() == DIM*DIM) {
+                for (int cell = 0; cell < DIM*DIM; cell++) {
+                    QChar next = line.at(cell);
+                    if ((next == '.') || (next == '0')) continue;
+                    int value = next.toLatin1() - '0';
+                    // qDebug() << cell << value;
+                    tiles[cell].setSolved(value);
+                    tiles[cell].lock();
+                }
+            }
+        }
+    }
 }

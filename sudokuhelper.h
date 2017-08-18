@@ -33,6 +33,8 @@ private slots:
 
     void on_action_Hint_triggered();
 
+    void on_actionOpen_triggered();
+
 private:
     Ui::SudokuHelper *ui;
     QFrame frames[DIM];
