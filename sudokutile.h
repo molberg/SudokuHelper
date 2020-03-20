@@ -23,9 +23,12 @@ public:
     bool isLocked() const { return locked; };
     int getValue()  const { return value;  };
     int unique();
+    void restore();
     void setCell(int value, bool possible);
     bool isPossible(int value) const;
+    // void setPossible(int value, bool flag);
     QSize sizeHint() const { return QSize(SUB*sub, SUB*sub); };
+    void dump();
 
 protected:
     void paintEvent(QPaintEvent *);
@@ -34,8 +37,8 @@ protected:
 
 signals:
     void valueChanged(int id, int value);
-    void moveFocus(int id, int steps);
     void restoreMe(int id, int value);
+    void moveFocus(int id, int steps);
 
 private:
     int m_id;

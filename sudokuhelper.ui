@@ -19,7 +19,7 @@
      <x>0</x>
      <y>0</y>
      <width>729</width>
-     <height>19</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -42,6 +42,7 @@
     <addaction name="action_Hint"/>
     <addaction name="actionLock"/>
     <addaction name="actionClear"/>
+    <addaction name="actionSolve"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuCells"/>
@@ -70,6 +71,9 @@
    <property name="text">
     <string>Clear</string>
    </property>
+   <property name="shortcut">
+    <string>F4</string>
+   </property>
   </action>
   <action name="action_Hint">
    <property name="text">
@@ -82,6 +86,14 @@
   <action name="actionOpen">
    <property name="text">
     <string>Open</string>
+   </property>
+  </action>
+  <action name="actionSolve">
+   <property name="text">
+    <string>Solve</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
    </property>
   </action>
  </widget>

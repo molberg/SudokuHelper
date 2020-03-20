@@ -41,9 +41,10 @@ SudokuHelper::SudokuHelper(QMainWindow *parent) :
     i = 0;
     for (int row = 0; row < DIM; row++) {
         for (int col = 0; col < DIM; col++) {
+            // qInfo() << row << col << row/SUB << col/SUB << (row/SUB)*SUB + col/SUB << subNumber(row, col);
             tiles[i].setId(i);
-            connect(&(tiles[i]), SIGNAL(valueChanged(int,int)), this, SLOT(updateField(int,int)));
-            connect(&(tiles[i]), SIGNAL(restoreMe(int,int)), this, SLOT(restoreField(int,int)));
+            connect(&(tiles[i]), SIGNAL(valueChanged(int, int)), this, SLOT(updateField(int, int)));
+            connect(&(tiles[i]), SIGNAL(restoreMe(int, int)), this, SLOT(restoreField(int, int)));
             connect(&(tiles[i]), SIGNAL(moveFocus(int, int)), this, SLOT(moveFocus(int, int)));
             i++;
         }
@@ -68,6 +69,7 @@ SudokuHelper::~SudokuHelper()
 
 void SudokuHelper::updateField(int cell, int value)
 {
+    // check();
     int row = rowNumber(cell);
     int col = colNumber(cell);
 
@@ -122,29 +124,14 @@ void SudokuHelper::on_actionClear_triggered()
 
 }
 
+void SudokuHelper::on_actionSolve_triggered()
+{
+    solve();
+}
+
 void SudokuHelper::restoreField(int cell, int value)
 {
-    int row = rowNumber(cell);
-    int col = colNumber(cell);
-    // update row
-    for (int i = 0; i < DIM; i++) {
-        int ic = cellNumber(row, i);
-        tiles[ic].setCell(value, true);
-    }
-    // update column
-    for (int i = 0; i < DIM; i++) {
-        int ic = cellNumber(i, col);
-        tiles[ic].setCell(value, true);
-    }
-    // update subframe
-    row = SUB*(row/SUB);
-    col = SUB*(col/SUB);
-    for (int k = 0; k < SUB; k++) {
-        for (int l = 0; l < SUB; l++) {
-            int ic = cellNumber(row+k, col+l);
-            tiles[ic].setCell(value, true);
-        }
-    }
+    check();
 }
 
 void SudokuHelper::moveFocus(int cell, int steps)
@@ -302,4 +289,89 @@ void SudokuHelper::on_actionOpen_triggered()
             }
         }
     }
+    check();
+}
+
+bool SudokuHelper::possible(int row, int col, int value)
+{
+    int cell = row*DIM+col;
+    return tiles[cell].isPossible(value);
+}
+
+bool SudokuHelper::solve()
+{
+    static int depth = 0;
+    depth++;
+    // qInfo() << __FUNCTION__ << depth;
+    for (int row = 0; row < DIM; row++) {
+        for (int col = 0; col < DIM; col++) {
+            int cell = cellNumber(row, col);
+            // tiles[cell].dump();
+            if (!tiles[cell].isLocked() && !tiles[cell].isSolved()) {
+                for (int value = 1; value <= DIM; value++) {
+                    if (tiles[cell].isPossible(value)) {
+                        // qInfo() << row << col << value << "is possible";
+                        tiles[cell].setSolved(value);
+                        if (solve()) return true;
+                        depth--;
+                        tiles[cell].restore();
+                    }
+                }
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+void SudokuHelper::check()
+{
+    for (int row = 0; row < DIM; row++) {
+        for (int col = 0; col < DIM; col++) {
+            int cell = cellNumber(row, col);
+            int sub = subNumber(row, col);
+            if (!tiles[cell].isLocked() && !tiles[cell].isSolved()) {
+                for (int value = 1; value <= DIM; value++) {
+                    if (!inRow(row, value) && !inCol(col, value) && !inSub(sub, value)) {
+                        // qInfo() << row << col << cell << sub << value << true;
+                        tiles[cell].setCell(value, true);
+                    } else {
+                        // qInfo() << row << col << cell << sub << value << false;
+                        tiles[cell].setCell(value, false);
+                    }
+                }
+            }
+        }
+    }
+}
+
+bool SudokuHelper::inRow(int row, int value)
+{
+    for (int col = 0; col < DIM; col++) {
+        int cell = cellNumber(row, col);
+        if (tiles[cell].getValue() == value) return true;
+    }
+    return false;
+}
+
+bool SudokuHelper::inCol(int col, int value)
+{
+    for (int row = 0; row < DIM; row++) {
+        int cell = cellNumber(row, col);
+        if (tiles[cell].getValue() == value) return true;
+    }
+    return false;
+}
+
+bool SudokuHelper::inSub(int sub, int value)
+{
+    int row1 = (sub/SUB)*SUB;
+    int col1 = (sub%SUB)*SUB;
+    for (int row = row1; row < row1+SUB; row++) {
+        for (int col = col1; col < col1+SUB; col++) {
+            int cell = cellNumber(row, col);
+            if (tiles[cell].getValue() == value) return true;
+        }
+    }
+    return false;
 }

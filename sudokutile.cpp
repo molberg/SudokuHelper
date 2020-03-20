@@ -3,6 +3,8 @@
 #include <QMouseEvent>
 #include <QKeyEvent>
 
+#include <stdio.h>
+
 #include "sudokutile.h"
 
 const int SudokuTile::sub = 18;
@@ -21,6 +23,18 @@ void SudokuTile::setSolved(int solution)
     repaint();
     update();
     emit valueChanged(m_id, solution);
+}
+
+void SudokuTile::restore()
+{
+    // qInfo() << __FUNCTION__ << m_id << value;
+    solved = false;
+    possible[value-1] = true;
+    value = 0;
+    repaint();
+    update();
+    emit restoreMe(m_id, value);
+    // dump();
 }
 
 void SudokuTile::lock()
@@ -71,6 +85,13 @@ bool SudokuTile::isPossible(int value) const
     return possible[value-1];
 }
 
+// void SudokuTile::setPossible(int value, bool flag)
+// {
+//     possible[value-1] = flag;
+//     repaint();
+//     update();
+// }
+
 void SudokuTile::paintEvent(QPaintEvent *)
 {
     QRectF size = QRectF(0, 0, 3*sub, 3*sub);
@@ -108,18 +129,16 @@ void SudokuTile::paintEvent(QPaintEvent *)
 
 void SudokuTile::mousePressEvent(QMouseEvent *e)
 {
+    // qInfo() << __FUNCTION__ << e->x() << e->y() << solved << m_id << value;
     if (solved) {
-        qDebug() << __FUNCTION__ << e->x() << e->y() << solved << m_id << value;
-        solved = false;
-        emit restoreMe(m_id, value);
-        value = 0;
+        restore();
     } else {
         int row = e->y()/sub;
         int col = e->x()/sub;
         if (row < 0 || row > 2 || col < 0 || col > 2) return;
-        int cell = row*3 + col + 1;
-        if (isPossible(cell)) {
-            setSolved(cell);
+        int subcell = row*3 + col + 1;
+        if (isPossible(subcell)) {
+            setSolved(subcell);
         }
     }
 }
@@ -157,4 +176,11 @@ void SudokuTile::keyPressEvent(QKeyEvent *e)
         }
         break;
     }
+}
+
+void SudokuTile::dump()
+{
+    printf("tile %d [%d %d] %d:", m_id, solved, locked, value);
+    for (int i = 0; i < DIM; i++) printf(" %d", possible[i]);
+    printf("\n");
 }

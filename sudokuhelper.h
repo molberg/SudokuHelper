@@ -17,6 +17,8 @@ public:
     explicit SudokuHelper(QMainWindow *parent = 0);
     ~SudokuHelper();
     void test();
+    bool solve();
+    void check();
 
 private slots:
     void updateField(int cell, int value);
@@ -24,16 +26,12 @@ private slots:
     void moveFocus(int cell, int steps);
 
     void on_actionAbout_triggered();
-
     void on_actionQuit_triggered();
-
     void on_actionLock_triggered();
-
     void on_actionClear_triggered();
-
     void on_action_Hint_triggered();
-
     void on_actionOpen_triggered();
+    void on_actionSolve_triggered();
 
 private:
     Ui::SudokuHelper *ui;
@@ -42,9 +40,14 @@ private:
     int rowNumber(int cell) { return cell/DIM; };
     int colNumber(int cell) { return cell%DIM; };
     int cellNumber(int row, int col) { return row*DIM+col; };
+    int subNumber(int row, int col) { return (row/SUB)*SUB + col/SUB; };
     int possibleRow(int row, int value);
     int possibleCol(int col, int value);
     int possibleSub(int sub, int value);
+    bool possible(int row, int col, int value);
+    bool inRow(int row, int value);
+    bool inCol(int col, int value);
+    bool inSub(int sub, int value);
 };
 
 #endif // SUDOKUHELPER_H
