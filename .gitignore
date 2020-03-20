@@ -1,0 +1,11 @@
+*~
+moc_*.*
+*.o
+*.pro.user
+*.pro.user.*
+.qmake.stash
+*.ui
+ui_*.h
+Makefile
+qsudoku
+gp.*
