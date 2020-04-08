@@ -13,7 +13,7 @@
 
 SudokuHelper::SudokuHelper(QMainWindow *parent) :
     QMainWindow(parent),
-    ui(new Ui::SudokuHelper)
+    ui(new Ui::SudokuHelper), m_solvable(true)
 {
     ui->setupUi(this);
     QGridLayout *grid = new QGridLayout;
@@ -46,6 +46,7 @@ SudokuHelper::SudokuHelper(QMainWindow *parent) :
             connect(&(tiles[i]), SIGNAL(valueChanged(int, int)), this, SLOT(updateField(int, int)));
             connect(&(tiles[i]), SIGNAL(restoreMe(int, int)), this, SLOT(restoreField(int, int)));
             connect(&(tiles[i]), SIGNAL(moveFocus(int, int)), this, SLOT(moveFocus(int, int)));
+            connect(&(tiles[i]), SIGNAL(unsolvable()), this, SLOT(unsolvable()));
             i++;
         }
     }
@@ -287,9 +288,31 @@ void SudokuHelper::on_actionOpen_triggered()
                     tiles[cell].lock();
                 }
             }
+            sudoku.close();
         }
     }
     check();
+}
+
+void SudokuHelper::on_actionSave_triggered()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, "Open sudoku", QDir::homePath()+"C/QT/SudokuHelper", "");
+    if (!fileName.isNull()) {
+        QFile sudoku(fileName);
+        if (sudoku.open(QIODevice::WriteOnly)) {
+            QTextStream out(&sudoku);
+            int cell = 0;
+            for (int row = 0; row < DIM; row++) {
+                for (int col = 0; col < DIM; col++) {
+                    int value = tiles[cell].getValue();
+                    out << (value > 0 ? QString::number(value) : QString("."));
+                    cell++;
+                }
+                out << "\n";
+            }
+            sudoku.close();
+        }
+    }
 }
 
 bool SudokuHelper::possible(int row, int col, int value)
@@ -311,7 +334,12 @@ bool SudokuHelper::solve()
                 for (int value = 1; value <= DIM; value++) {
                     if (tiles[cell].isPossible(value)) {
                         // qInfo() << row << col << value << "is possible";
+                        m_solvable = true;
                         tiles[cell].setSolved(value);
+                        if (!m_solvable) {
+                            tiles[cell].restore();
+                            continue;
+                        }
                         if (solve()) return true;
                         depth--;
                         tiles[cell].restore();

@@ -24,6 +24,7 @@ private slots:
     void updateField(int cell, int value);
     void restoreField(int cell, int value);
     void moveFocus(int cell, int steps);
+    void unsolvable() { m_solvable = false; }
 
     void on_actionAbout_triggered();
     void on_actionQuit_triggered();
@@ -31,12 +32,14 @@ private slots:
     void on_actionClear_triggered();
     void on_action_Hint_triggered();
     void on_actionOpen_triggered();
+    void on_actionSave_triggered();
     void on_actionSolve_triggered();
 
 private:
     Ui::SudokuHelper *ui;
     QFrame frames[DIM];
     SudokuTile tiles[DIM*DIM];
+    bool m_solvable;
     int rowNumber(int cell) { return cell/DIM; };
     int colNumber(int cell) { return cell%DIM; };
     int cellNumber(int row, int col) { return row*DIM+col; };

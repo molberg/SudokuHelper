@@ -26,7 +26,6 @@ public:
     void restore();
     void setCell(int value, bool possible);
     bool isPossible(int value) const;
-    // void setPossible(int value, bool flag);
     QSize sizeHint() const { return QSize(SUB*sub, SUB*sub); };
     void dump();
 
@@ -39,6 +38,7 @@ signals:
     void valueChanged(int id, int value);
     void restoreMe(int id, int value);
     void moveFocus(int id, int steps);
+    void unsolvable();
 
 private:
     int m_id;

@@ -77,6 +77,12 @@ void SudokuTile::setCell(int value, bool flag)
         repaint();
         update();
     }
+    bool allowed = false;
+    for (int i = 0; i < DIM; i++) {
+        allowed |= possible[i];
+        if (allowed) return;
+    }
+    emit unsolvable();
 }
 
 bool SudokuTile::isPossible(int value) const
@@ -84,13 +90,6 @@ bool SudokuTile::isPossible(int value) const
     if (value < 1 || value > DIM) return false;
     return possible[value-1];
 }
-
-// void SudokuTile::setPossible(int value, bool flag)
-// {
-//     possible[value-1] = flag;
-//     repaint();
-//     update();
-// }
 
 void SudokuTile::paintEvent(QPaintEvent *)
 {
