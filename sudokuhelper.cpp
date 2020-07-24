@@ -95,6 +95,15 @@ void SudokuHelper::updateField(int cell, int value)
     }
 }
 
+void SudokuHelper::on_actionNew_triggered()
+{
+    for (int ic = 0; ic < DIM*DIM; ic++) {
+        tiles[ic].unlock();
+        tiles[ic].reset();
+    }
+    repaint();
+}
+
 void SudokuHelper::on_actionAbout_triggered()
 {
     QMessageBox::about(this, "About sudoku helper", "Hello Sudoku!");
@@ -132,6 +141,8 @@ void SudokuHelper::on_actionSolve_triggered()
 
 void SudokuHelper::restoreField(int cell, int value)
 {
+    Q_UNUSED(cell);
+    Q_UNUSED(value);
     check();
 }
 

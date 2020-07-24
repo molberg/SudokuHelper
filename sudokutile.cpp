@@ -44,6 +44,11 @@ void SudokuTile::lock()
     update();
 }
 
+void SudokuTile::unlock()
+{
+    locked = false;
+}
+
 void SudokuTile::reset()
 {
     if (!locked) {

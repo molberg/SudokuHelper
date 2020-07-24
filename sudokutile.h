@@ -18,6 +18,7 @@ public:
     void setId(int n) { m_id = n; m_row = n/DIM; m_col = n%DIM; };
     void setSolved(int solution);
     void lock();
+    void unlock();
     void reset();
     bool isSolved() const { return solved; };
     bool isLocked() const { return locked; };
