@@ -23,4 +23,5 @@ HEADERS  += sudokuhelper.h \
 
 FORMS    += sudokuhelper.ui
 
+target.path = /usr/local/bin
 INSTALLS += target
