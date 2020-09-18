@@ -133,17 +133,21 @@ void SudokuTile::paintEvent(QPaintEvent *)
 
 void SudokuTile::mousePressEvent(QMouseEvent *e)
 {
-    // qInfo() << __FUNCTION__ << e->x() << e->y() << solved << m_id << value;
-    if (solved) {
-        restore();
-    } else {
-        int row = e->y()/sub;
-        int col = e->x()/sub;
-        if (row < 0 || row > 2 || col < 0 || col > 2) return;
-        int subcell = row*3 + col + 1;
-        if (isPossible(subcell)) {
-            setSolved(subcell);
+    // qInfo() << __FUNCTION__ << e->x() << e->y() << solved << m_id << value << e->button();
+    int row = e->y()/sub;
+    int col = e->x()/sub;
+    if (row < 0 || row > 2 || col < 0 || col > 2) return;
+    int subcell = row*3 + col + 1;
+    if (e->button() == Qt::LeftButton) {
+        if (solved) {
+            restore();
+        } else {
+            if (isPossible(subcell)) {
+                setSolved(subcell);
+            }
         }
+    } else {
+        setCell(subcell, false);
     }
 }
 
