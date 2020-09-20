@@ -307,7 +307,7 @@ void SudokuHelper::on_actionOpen_triggered()
 
 void SudokuHelper::on_actionSave_triggered()
 {
-    QString fileName = QFileDialog::getSaveFileName(this, "Open sudoku", QDir::homePath()+"C/QT/SudokuHelper", "");
+    QString fileName = QFileDialog::getSaveFileName(this, "Open sudoku", QDir::homePath()+"/C/QT/SudokuHelper", "");
     if (!fileName.isNull()) {
         QFile sudoku(fileName);
         if (sudoku.open(QIODevice::WriteOnly)) {
