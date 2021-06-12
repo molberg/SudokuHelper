@@ -161,7 +161,7 @@ void SudokuHelper::on_action_Hint_triggered()
         if ((value = tiles[ic].unique()) > 0) {
             // tiles[ic].setSolved(value);
             tiles[ic].setFocus();
-            qDebug() << "unique value" << rowNumber(ic) << colNumber(ic) << value;
+            qDebug("unique value @ [%d,%d]: %d", rowNumber(ic), colNumber(ic), value);
             return;
         }
     }
@@ -171,19 +171,19 @@ void SudokuHelper::on_action_Hint_triggered()
             if ((ic = possibleRow(i, value)) != -1) {
                 // tiles[ic].setSolved(value);
                 tiles[ic].setFocus();
-                qDebug() << "possible row" << rowNumber(ic) << colNumber(ic) << value;
+                qDebug("possible row @ [%d,%d]: %d", rowNumber(ic), colNumber(ic), value);
                 return;
             }
             if ((ic = possibleCol(i, value)) != -1) {
                 // tiles[ic].setSolved(value);
                 tiles[ic].setFocus();
-                qDebug() << "possible col" << rowNumber(ic) << colNumber(ic) << value;
+                qDebug("possible col @ [%d,%d]: %d", rowNumber(ic), colNumber(ic), value);
                 return;
             }
             if ((ic = possibleSub(i, value)) != -1) {
                 // tiles[ic].setSolved(value);
                 tiles[ic].setFocus();
-                qDebug() << "possible sub" << rowNumber(ic) << colNumber(ic) << value;
+                qDebug("possible sub @ [%d,%d]: %d", rowNumber(ic), colNumber(ic), value);
                 return;
             }
         }
