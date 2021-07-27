@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui printsupport
 QMAKE_LFLAGS += -no-pie
 CONFIG   += console debug
 

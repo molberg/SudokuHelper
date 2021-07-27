@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QFrame>
+#include <QPrinter>
 #include "sudokutile.h"
 
 namespace Ui {
@@ -27,6 +28,7 @@ private slots:
     void unsolvable() { m_solvable = false; }
 
     void on_actionAbout_triggered();
+    void on_actionPrint_triggered();
     void on_actionQuit_triggered();
     void on_actionLock_triggered();
     void on_actionClear_triggered();
@@ -38,6 +40,7 @@ private slots:
 
 private:
     Ui::SudokuHelper *ui;
+    QPrinter printer;
     QFrame frames[DIM];
     SudokuTile tiles[DIM*DIM];
     bool m_solvable;

@@ -7,6 +7,8 @@
 #include <QDir>
 #include <QTextStream>
 #include <QRegExp>
+#include <QPainter>
+#include <QPrintDialog>
 
 #include "sudokuhelper.h"
 #include "ui_sudokuhelper.h"
@@ -56,7 +58,7 @@ SudokuHelper::SudokuHelper(QMainWindow *parent) :
     grid->setHorizontalSpacing(1);
     grid->setVerticalSpacing(1);
 
-    // Set QWidget as the central layout of the main window
+    // Set QWidget as the central widget of the main window
     setCentralWidget(window);
     layout()->setSizeConstraint(QLayout::SetFixedSize);
     tiles[0].setFocus();
@@ -107,6 +109,23 @@ void SudokuHelper::on_actionNew_triggered()
 void SudokuHelper::on_actionAbout_triggered()
 {
     QMessageBox::about(this, "About sudoku helper", "Hello Sudoku!");
+}
+
+void SudokuHelper::on_actionPrint_triggered()
+{
+    QPrintDialog printDialog(&printer, this);
+    if (printDialog.exec()) {
+        QPainter painter(&printer);
+        QWidget *myWidget = centralWidget();
+        double xscale = printer.pageRect().width()/double(myWidget->width());
+        double yscale = printer.pageRect().height()/double(myWidget->height());
+        double scale = qMin(xscale, yscale);
+        painter.translate(printer.paperRect().x() + printer.pageRect().width()/2,
+                          printer.paperRect().y() + printer.pageRect().height()/2);
+        painter.scale(scale, scale);
+        painter.translate(-width()/2, -height()/2);
+        myWidget->render(&painter);
+    }
 }
 
 void SudokuHelper::on_actionQuit_triggered()
