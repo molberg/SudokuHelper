@@ -168,6 +168,7 @@ void SudokuHelper::restoreField(int cell, int value)
 void SudokuHelper::moveFocus(int cell, int steps)
 {
     cell += steps;
+    cell %= DIM*DIM;
     if (cell < 0 || cell >= DIM*DIM) setFocus();
     else                 tiles[cell].setFocus();
 }

@@ -105,7 +105,9 @@ void SudokuTile::paintEvent(QPaintEvent *)
 
     if (solved) {
         if (locked) pen = QPen(Qt::red);
-        else        pen = QPen(Qt::black);
+        else
+            if (hasFocus()) pen = QPen(Qt::black);
+            else            pen = QPen(Qt::darkGray);
         painter.setPen(pen);
         QFont font;
         font.setPixelSize(32);
