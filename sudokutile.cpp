@@ -10,7 +10,7 @@
 const int SudokuTile::sub = 18;
 
 SudokuTile::SudokuTile(QWidget *parent) :
-    QWidget(parent), possible(DIM), solved(false), locked(false), value(0)
+    QWidget(parent), possible(DIM), solved(false), locked(false), marked(false), value(0)
 {
     for (int i = 0; i < DIM; i++) possible[i] = true;
     setMinimumSize(3*sub+2, 3*sub+2);
@@ -49,11 +49,24 @@ void SudokuTile::unlock()
     locked = false;
 }
 
+void SudokuTile::mark()
+{
+    marked = true;
+    repaint();
+    update();
+}
+
+void SudokuTile::unmark()
+{
+    marked = false;
+}
+
 void SudokuTile::reset()
 {
     if (!locked) {
         solved = false;
         locked = false;
+        marked = false;
         value = 0;
         for (int i = 0; i < DIM; i++) possible[i] = true;
     }
@@ -116,7 +129,8 @@ void SudokuTile::paintEvent(QPaintEvent *)
         painter.setFont(font);
         painter.drawText(size, Qt::AlignCenter, QString::number(value));
     } else {
-        painter.setBrush(Qt::lightGray);
+        if (marked) painter.setBrush(QColor(200, 255, 200));   // light green
+        else        painter.setBrush(Qt::lightGray);
         int number = 1;
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
@@ -155,36 +169,55 @@ void SudokuTile::mousePressEvent(QMouseEvent *e)
 
 void SudokuTile::keyPressEvent(QKeyEvent *e)
 {
-    switch (e->key()) {
-    case Qt::Key_Tab:
-    case Qt::Key_Right:
-        emit moveFocus(m_id, 1);
-        break;
-    case Qt::Key_Backtab:
-    case Qt::Key_Left:
-        emit moveFocus(m_id, -1);
-        break;
-    case Qt::Key_Up:
-        emit moveFocus(m_id, -DIM);
-        break;
-    case Qt::Key_Down:
-        emit moveFocus(m_id, DIM);
-        break;
-    case Qt::Key_1:
-    case Qt::Key_2:
-    case Qt::Key_3:
-    case Qt::Key_4:
-    case Qt::Key_5:
-    case Qt::Key_6:
-    case Qt::Key_7:
-    case Qt::Key_8:
-    case Qt::Key_9:
-        int cell = e->key() - Qt::Key_0;
-        if (!solved && isPossible(cell)) {
-            setSolved(cell);
-            emit moveFocus(m_id, 1);
+    if (e->modifiers() == Qt::ControlModifier) {
+        switch (e->key()) {
+          case Qt::Key_0:
+          case Qt::Key_1:
+          case Qt::Key_2:
+          case Qt::Key_3:
+          case Qt::Key_4:
+          case Qt::Key_5:
+          case Qt::Key_6:
+          case Qt::Key_7:
+          case Qt::Key_8:
+          case Qt::Key_9:
+            int cell = e->key() - Qt::Key_0;
+            emit markCells(cell);
+            break;
         }
-        break;
+    } else {
+        switch (e->key()) {
+          case Qt::Key_Tab:
+          case Qt::Key_Right:
+            emit moveFocus(m_id, 1);
+            break;
+          case Qt::Key_Backtab:
+          case Qt::Key_Left:
+            emit moveFocus(m_id, -1);
+            break;
+          case Qt::Key_Up:
+            emit moveFocus(m_id, -DIM);
+            break;
+          case Qt::Key_Down:
+            emit moveFocus(m_id, DIM);
+            break;
+
+          case Qt::Key_1:
+          case Qt::Key_2:
+          case Qt::Key_3:
+          case Qt::Key_4:
+          case Qt::Key_5:
+          case Qt::Key_6:
+          case Qt::Key_7:
+          case Qt::Key_8:
+          case Qt::Key_9:
+            int cell = e->key() - Qt::Key_0;
+            if (!solved && isPossible(cell)) {
+                setSolved(cell);
+                emit moveFocus(m_id, 1);
+            }
+            break;
+        }
     }
 }
 

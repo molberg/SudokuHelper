@@ -26,6 +26,7 @@ private slots:
     void restoreField(int cell, int value);
     void moveFocus(int cell, int steps);
     void unsolvable() { m_solvable = false; }
+    void highlightCells(int value);
 
     void on_actionAbout_triggered();
     void on_actionPrint_triggered();

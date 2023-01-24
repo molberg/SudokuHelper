@@ -49,6 +49,7 @@ SudokuHelper::SudokuHelper(QMainWindow *parent) :
             connect(&(tiles[i]), SIGNAL(restoreMe(int, int)), this, SLOT(restoreField(int, int)));
             connect(&(tiles[i]), SIGNAL(moveFocus(int, int)), this, SLOT(moveFocus(int, int)));
             connect(&(tiles[i]), SIGNAL(unsolvable()), this, SLOT(unsolvable()));
+            connect(&(tiles[i]), SIGNAL(markCells(int)), this, SLOT(highlightCells(int)));
             i++;
         }
     }
@@ -171,6 +172,18 @@ void SudokuHelper::moveFocus(int cell, int steps)
     cell %= DIM*DIM;
     if (cell < 0 || cell >= DIM*DIM) setFocus();
     else                 tiles[cell].setFocus();
+}
+
+void SudokuHelper::highlightCells(int value)
+{
+    for (int ic = 0; ic < DIM*DIM; ic++) {
+        if (!tiles[ic].isSolved()) {
+            if (value == 0) {
+                tiles[ic].unmark();
+            } else if (tiles[ic].isPossible(value)) tiles[ic].mark();
+        }
+    }
+    repaint();
 }
 
 void SudokuHelper::on_action_Hint_triggered()

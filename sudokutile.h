@@ -19,9 +19,12 @@ public:
     void setSolved(int solution);
     void lock();
     void unlock();
+    void mark();
+    void unmark();
     void reset();
     bool isSolved() const { return solved; };
     bool isLocked() const { return locked; };
+    bool isMarked() const { return marked; };
     int getValue()  const { return value;  };
     int unique();
     void restore();
@@ -40,6 +43,7 @@ signals:
     void restoreMe(int id, int value);
     void moveFocus(int id, int steps);
     void unsolvable();
+    void markCells(int value);
 
 private:
     int m_id;
@@ -47,6 +51,7 @@ private:
     QVector<bool> possible;
     bool solved;
     bool locked;
+    bool marked;
     int value;
 };
 
