@@ -192,8 +192,8 @@ void SudokuHelper::on_action_Hint_triggered()
 
     for (int ic = 0; ic < DIM*DIM; ic++) {
         if ((value = tiles[ic].unique()) > 0) {
-            // tiles[ic].setSolved(value);
-            tiles[ic].setFocus();
+            tiles[ic].setSolved(value);
+            // tiles[ic].setFocus();
             qDebug("unique value @ [%d,%d]: %d", rowNumber(ic), colNumber(ic), value);
             return;
         }
@@ -202,20 +202,20 @@ void SudokuHelper::on_action_Hint_triggered()
     for (value = 1; value <= 9; value++) {
         for (int i = 0; i < DIM; i++) {
             if ((ic = possibleRow(i, value)) != -1) {
-                // tiles[ic].setSolved(value);
-                tiles[ic].setFocus();
+                tiles[ic].setSolved(value);
+                // tiles[ic].setFocus();
                 qDebug("possible row @ [%d,%d]: %d", rowNumber(ic), colNumber(ic), value);
                 return;
             }
             if ((ic = possibleCol(i, value)) != -1) {
-                // tiles[ic].setSolved(value);
-                tiles[ic].setFocus();
+                tiles[ic].setSolved(value);
+                // tiles[ic].setFocus();
                 qDebug("possible col @ [%d,%d]: %d", rowNumber(ic), colNumber(ic), value);
                 return;
             }
             if ((ic = possibleSub(i, value)) != -1) {
-                // tiles[ic].setSolved(value);
-                tiles[ic].setFocus();
+                tiles[ic].setSolved(value);
+                // tiles[ic].setFocus();
                 qDebug("possible sub @ [%d,%d]: %d", rowNumber(ic), colNumber(ic), value);
                 return;
             }
@@ -233,8 +233,7 @@ int SudokuHelper::possibleRow(int row, int value)
             which = ic;
         }
     }
-    if (count == 1) return which;
-    return -1;
+    return count == 1 ? which : -1;
 }
 
 int SudokuHelper::possibleCol(int col, int value)
@@ -247,8 +246,7 @@ int SudokuHelper::possibleCol(int col, int value)
             which = ic;
         }
     }
-    if (count == 1) return which;
-    return -1;
+    return count == 1 ? which : -1;
 }
 
 int SudokuHelper::possibleSub(int sub, int value)
@@ -265,8 +263,7 @@ int SudokuHelper::possibleSub(int sub, int value)
             }
         }
     }
-    if (count == 1) return which;
-    return -1;
+    return count == 1 ? which : -1;
 }
 
 void SudokuHelper::test()
